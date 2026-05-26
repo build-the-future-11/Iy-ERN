@@ -3,8 +3,11 @@ import {
   ArrowRight,
   BadgeCheck,
   BookOpen,
+  Clock3,
   FileText,
+  Filter,
   Globe2,
+  Search,
   ShieldCheck,
   Sparkles,
   Users,
@@ -12,23 +15,29 @@ import {
 
 const GOOGLE_FORM_URL = 'https://forms.gle/your-google-form-link'
 
+const stats = [
+  { label: 'Public research access', value: 'Open' },
+  { label: 'Submission route', value: 'Google Form' },
+  { label: 'Quality signal', value: 'Endorsements' },
+]
+
 const pillars = [
   {
-    title: 'Make financial knowledge accessible',
+    title: 'Financial literacy, made public',
     text:
-      'Turn research, explainers, and evidence-based writing into something students, researchers, and the public can actually use.',
+      'A clean home for research, explainers, and evidence-based work that should be easy to read and easy to share.',
     icon: BookOpen,
   },
   {
-    title: 'Share research publicly',
+    title: 'Research with structure',
     text:
-      'Create a clean public space where strong ideas can be discovered, referenced, and discussed without unnecessary barriers.',
+      'A simple publication flow that keeps submissions organized and presents approved work clearly.',
     icon: Globe2,
   },
   {
-    title: 'Keep quality visible',
+    title: 'Credibility over clutter',
     text:
-      'Use a simple endorsement signal and editorial review process so serious work stands out clearly.',
+      'An endorsement signal and editorial review help surface stronger work without overcomplicating the experience.',
     icon: ShieldCheck,
   },
 ]
@@ -36,78 +45,96 @@ const pillars = [
 const process = [
   {
     step: '01',
-    title: 'Submit the form',
-    text: 'Authors share their paper through a Google Form with the basic details and files needed for review.',
+    title: 'Submit',
+    text: 'Authors complete the Google Form with paper details, files, and basic context.',
   },
   {
     step: '02',
-    title: 'Review and verify',
-    text: 'The team checks the submission, confirms the structure, and looks for fit, clarity, and credibility.',
+    title: 'Review',
+    text: 'The team checks fit, clarity, structure, and whether the submission meets the site’s standards.',
   },
   {
     step: '03',
-    title: 'Publish publicly',
-    text: 'Approved work gets presented on the site in a clean format that makes it easy to read and cite.',
+    title: 'Publish',
+    text: 'Approved work is presented publicly in a clean, accessible format.',
   },
-]
-
-const highlights = [
-  'Financial literacy first',
-  'Public-facing research',
-  'Simple endorsement system',
-  'Modern editorial presentation',
 ]
 
 function App() {
   return (
     <main className="page">
-      <header className="nav">
-        <div>
-          <div className="brand">IYERN</div>
-          <div className="subtitle">International Youth Economics Research Network</div>
+      <header className="topbar">
+        <div className="topbar-inner">
+          <div>
+            <div className="brand">IYERN</div>
+            <div className="subtitle">International Youth Economics Research Network</div>
+          </div>
+
+          <nav className="topbar-actions">
+            <a href="#about">About</a>
+            <a href="#process">Process</a>
+            <a className="submit-link" href={GOOGLE_FORM_URL} target="_blank" rel="noreferrer">
+              Submit research <ArrowRight size={16} />
+            </a>
+          </nav>
         </div>
-        <a className="nav-link" href={GOOGLE_FORM_URL} target="_blank" rel="noreferrer">
-          Submit research <ArrowRight size={16} />
-        </a>
       </header>
 
-      <section className="hero card">
-        <div className="hero-copy">
-          <p className="eyebrow">Open research. Public education. Better access.</p>
-          <h1>Make financial literacy and research easy to find, easy to share, and easy to trust.</h1>
+      <section className="hero">
+        <div className="hero-main">
+          <p className="eyebrow">Open research infrastructure for financial literacy</p>
+          <h1>Public research, presented with the clarity of arXiv and the polish of a modern publication site.</h1>
           <p className="lede">
-            IYERN is a public research network built to spread financial understanding and give
-            emerging research a serious, polished place to live. The goal is simple: make useful
-            work visible to more people.
+            IYERN is built to make financial literacy and economic research easier to discover, easier to submit, and easier to trust.
+            The site is designed for real work, not filler content.
           </p>
+
+          <div className="search-shell" aria-hidden="true">
+            <div className="search-box">
+              <Search size={18} />
+              <span>Search research, authors, or topics</span>
+            </div>
+            <button className="filter-button" type="button">
+              <Filter size={16} />
+              Filters
+            </button>
+          </div>
+
           <div className="hero-actions">
             <a className="button primary" href={GOOGLE_FORM_URL} target="_blank" rel="noreferrer">
               Submit via Google Form <ArrowRight size={18} />
             </a>
-            <a className="button secondary" href="#how-it-works">
-              How it works <ArrowRight size={18} />
+            <a className="button secondary" href="#about">
+              Learn more <ArrowRight size={18} />
             </a>
           </div>
         </div>
 
-        <aside className="hero-aside">
-          <div className="accent-box">
-            <Sparkles size={18} />
-            <p>Built to feel modern, credible, and calm — not crowded or overly animated.</p>
+        <aside className="hero-side">
+          <div className="info-card spotlight">
+            <div className="info-icon">
+              <Sparkles size={18} />
+            </div>
+            <div>
+              <div className="info-title">Modern, calm, academic</div>
+              <p>No clutter. No fake papers. Just a serious public-facing research network.</p>
+            </div>
           </div>
-          <div className="highlight-grid">
-            {highlights.map((item) => (
-              <div key={item} className="highlight-pill">
-                {item}
+
+          <div className="stats-card">
+            {stats.map((item) => (
+              <div key={item.label} className="stat-row">
+                <span>{item.label}</span>
+                <strong>{item.value}</strong>
               </div>
             ))}
           </div>
         </aside>
       </section>
 
-      <section className="section-grid">
+      <section className="card-grid">
         {pillars.map(({ title, text, icon: Icon }) => (
-          <article key={title} className="card pillar">
+          <article key={title} className="feature-card">
             <div className="icon-wrap">
               <Icon size={18} />
             </div>
@@ -117,27 +144,58 @@ function App() {
         ))}
       </section>
 
-      <section id="how-it-works" className="card process">
+      <section id="about" className="layout-split">
+        <article className="panel">
+          <div className="section-label">About the platform</div>
+          <h2>Built to feel like a serious research archive, not a generic startup landing page.</h2>
+          <p>
+            The visual direction should be understated, structured, and content-first. Think arXiv’s usefulness,
+            but with better spacing, typography, and a more premium presentation.
+          </p>
+
+          <div className="mini-list">
+            <div className="mini-item">
+              <BadgeCheck size={16} />
+              <span>Endorsement-based quality signal</span>
+            </div>
+            <div className="mini-item">
+              <FileText size={16} />
+              <span>Clean paper submission workflow</span>
+            </div>
+            <div className="mini-item">
+              <Users size={16} />
+              <span>Public access for readers and researchers</span>
+            </div>
+          </div>
+        </article>
+
+        <aside className="panel callout">
+          <div className="section-label">Submission note</div>
+          <p>
+            Authors submit through the form, and the team handles review and publication manually for now.
+            This keeps the site lightweight and credible while the network grows.
+          </p>
+          <a className="button primary full" href={GOOGLE_FORM_URL} target="_blank" rel="noreferrer">
+            Open submission form <ArrowRight size={18} />
+          </a>
+        </aside>
+      </section>
+
+      <section id="process" className="panel process-panel">
         <div className="section-head">
           <div>
-            <p className="eyebrow">How submissions move through the system</p>
-            <h2>A simple public pipeline with human review.</h2>
+            <div className="section-label">Process</div>
+            <h2>Simple publishing flow</h2>
           </div>
-          <div className="badge-row">
-            <span className="badge">
-              <Users size={14} />
-              Public access
-            </span>
-            <span className="badge">
-              <BadgeCheck size={14} />
-              Endorsement signal
-            </span>
+          <div className="process-tag">
+            <Clock3 size={14} />
+            Human review
           </div>
         </div>
 
-        <div className="steps">
+        <div className="process-grid">
           {process.map(({ step, title, text }) => (
-            <article key={step} className="step">
+            <article key={step} className="process-card">
               <div className="step-num">{step}</div>
               <h3>{title}</h3>
               <p>{text}</p>
@@ -146,32 +204,13 @@ function App() {
         </div>
       </section>
 
-      <section className="card split">
+      <footer className="footer">
         <div>
-          <p className="eyebrow">What the site should say</p>
-          <h2>One clear message: financial literacy and research should be public, useful, and credible.</h2>
-          <p>
-            This homepage is intentionally minimal. No fake papers, no placeholder publications, no
-            invented content. Just a professional explanation of the platform and a direct path to
-            submit work.
-          </p>
+          <div className="footer-title">Public research, done cleanly.</div>
+          <p>IYERN is designed to make financial literacy and research more visible without overwhelming the page.</p>
         </div>
-        <div className="note-box">
-          <FileText size={18} />
-          <p>
-            The paper pages, metadata, and publication templates can come later once real submissions
-            exist.
-          </p>
-        </div>
-      </section>
-
-      <footer className="footer card">
-        <div>
-          <div className="footer-title">Ready for real submissions</div>
-          <p>Use the form to collect entries while the site stays clean, focused, and public.</p>
-        </div>
-        <a className="button primary" href={GOOGLE_FORM_URL} target="_blank" rel="noreferrer">
-          Open submission form <ArrowRight size={18} />
+        <a className="submit-link" href={GOOGLE_FORM_URL} target="_blank" rel="noreferrer">
+          Submit research <ArrowRight size={16} />
         </a>
       </footer>
     </main>
