@@ -16,7 +16,7 @@ env:
   SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
 
 jobs:
-  # Locked dependency and submission-boundary verification.
+  # Locked dependency, product-claim, and submission-boundary verification.
   verify:
     runs-on: ubuntu-24.04
     timeout-minutes: 10
@@ -63,8 +63,8 @@ jobs:
             exit 1
           fi
 
-      - name: Test submission URL validation
-        run: node --test tests/submission-config.test.mjs
+      - name: Run product-boundary regression tests
+        run: node --test tests/*.test.mjs
 
       - name: Build production bundle
         run: npm run build
