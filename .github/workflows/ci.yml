@@ -63,5 +63,8 @@ jobs:
             exit 1
           fi
 
+      - name: Test submission URL validation
+        run: node --test tests/submission-config.test.mjs
+
       - name: Build production bundle
         run: npm run build
