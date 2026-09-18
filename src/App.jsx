@@ -13,11 +13,34 @@ import {
   Users,
 } from 'lucide-react'
 
-const GOOGLE_FORM_URL = 'https://forms.gle/your-google-form-link'
+const configuredSubmissionFormUrl = (import.meta.env.VITE_SUBMISSION_FORM_URL || '').trim()
+const SUBMISSION_FORM_URL = /^https:\/\//i.test(configuredSubmissionFormUrl)
+  ? configuredSubmissionFormUrl
+  : null
+
+function SubmissionAction({ className, children }) {
+  if (!SUBMISSION_FORM_URL) {
+    return (
+      <span
+        className={`${className} disabled`}
+        aria-disabled="true"
+        title="Submission form is not configured"
+      >
+        {children}
+      </span>
+    )
+  }
+
+  return (
+    <a className={className} href={SUBMISSION_FORM_URL} target="_blank" rel="noreferrer">
+      {children}
+    </a>
+  )
+}
 
 const stats = [
   { label: 'Public research access', value: 'Open' },
-  { label: 'Submission route', value: 'Google Form' },
+  { label: 'Submission route', value: SUBMISSION_FORM_URL ? 'Google Form' : 'Not configured' },
   { label: 'Quality signal', value: 'Endorsements' },
 ]
 
@@ -73,9 +96,9 @@ function App() {
           <nav className="topbar-actions">
             <a href="#about">About</a>
             <a href="#process">Process</a>
-            <a className="submit-link" href={GOOGLE_FORM_URL} target="_blank" rel="noreferrer">
+            <SubmissionAction className="submit-link">
               Submit research <ArrowRight size={16} />
-            </a>
+            </SubmissionAction>
           </nav>
         </div>
       </header>
@@ -101,9 +124,9 @@ function App() {
           </div>
 
           <div className="hero-actions">
-            <a className="button primary" href={GOOGLE_FORM_URL} target="_blank" rel="noreferrer">
-              Submit via Google Form <ArrowRight size={18} />
-            </a>
+            <SubmissionAction className="button primary">
+              {SUBMISSION_FORM_URL ? 'Submit via Google Form' : 'Submissions not configured'} <ArrowRight size={18} />
+            </SubmissionAction>
             <a className="button secondary" href="#about">
               Learn more <ArrowRight size={18} />
             </a>
@@ -172,12 +195,13 @@ function App() {
         <aside className="panel callout">
           <div className="section-label">Submission note</div>
           <p>
-            Authors submit through the form, and the team handles review and publication manually for now.
-            This keeps the site lightweight and credible while the network grows.
+            {SUBMISSION_FORM_URL
+              ? 'Authors submit through the configured form, and the team handles review and publication manually for now.'
+              : 'The submission form has not been configured yet. The site does not route authors to a placeholder or guessed destination.'}
           </p>
-          <a className="button primary full" href={GOOGLE_FORM_URL} target="_blank" rel="noreferrer">
-            Open submission form <ArrowRight size={18} />
-          </a>
+          <SubmissionAction className="button primary full">
+            {SUBMISSION_FORM_URL ? 'Open submission form' : 'Submission form unavailable'} <ArrowRight size={18} />
+          </SubmissionAction>
         </aside>
       </section>
 
@@ -209,9 +233,9 @@ function App() {
           <div className="footer-title">Public research, done cleanly.</div>
           <p>IYERN is designed to make financial literacy and research more visible without overwhelming the page.</p>
         </div>
-        <a className="submit-link" href={GOOGLE_FORM_URL} target="_blank" rel="noreferrer">
+        <SubmissionAction className="submit-link">
           Submit research <ArrowRight size={16} />
-        </a>
+        </SubmissionAction>
       </footer>
     </main>
   )
