@@ -16,6 +16,7 @@ env:
   SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
 
 jobs:
+  # Locked dependency and submission-boundary verification.
   verify:
     runs-on: ubuntu-24.04
     timeout-minutes: 10
