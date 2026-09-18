@@ -1,0 +1,64 @@
+name: One-shot lockfile bootstrap
+
+on:
+  pull_request:
+    paths:
+      - 'package.json'
+      - '.github/workflows/lockfile-bootstrap.yml'
+
+permissions:
+  contents: write
+
+env:
+  SOURCE_SHA: ${{ github.event.pull_request.head.sha }}
+
+jobs:
+  bootstrap:
+    if: github.event.pull_request.head.repo.full_name == github.repository && github.head_ref == 'fix/submission-config-boundary-20260918'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - name: Checkout exact PR head
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ env.SOURCE_SHA }}
+          persist-credentials: true
+
+      - name: Verify exact source
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
+          test -z "$(git status --porcelain)"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '22.23.2'
+
+      - name: Generate lockfile without running package scripts
+        run: npm install --package-lock-only --ignore-scripts
+
+      - name: Install exact generated graph
+        run: npm ci
+
+      - name: Require high-severity production audit clean
+        run: npm audit --omit=dev --audit-level=high
+
+      - name: Build production bundle
+        run: npm run build
+
+      - name: Commit verified lockfile and retire helper
+        shell: bash
+        env:
+          EXPECTED_BRANCH: fix/submission-config-boundary-20260918
+        run: |
+          set -euo pipefail
+          test "${GITHUB_HEAD_REF}" = "${EXPECTED_BRANCH}"
+          test -f package-lock.json
+          git rm .github/workflows/lockfile-bootstrap.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add package-lock.json
+          git commit -m 'build: add verified npm lockfile'
+          git push origin "HEAD:${EXPECTED_BRANCH}"
