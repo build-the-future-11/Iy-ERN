@@ -14,11 +14,11 @@ The repository does not currently implement a publication database, authenticati
 ## Local development
 
 ```bash
-npm install
+npm ci
 npm run dev
 ```
 
-A dependency lockfile is not currently committed. Because of that, the repository does **not** yet have a reproducible GitHub Actions build gate. Issue #1 tracks the lockfile + CI prerequisite.
+A reviewed npm lockfile is committed. GitHub Actions now verifies the exact PR/source SHA on Node 22.23.2, installs with `npm ci`, fails on high-severity production dependency advisories, enforces the submission-config boundary, and builds the production bundle.
 
 ## Submission configuration
 
