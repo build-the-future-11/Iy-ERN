@@ -12,11 +12,9 @@ import {
   Sparkles,
   Users,
 } from 'lucide-react'
+import { normalizeSubmissionUrl } from './submissionConfig.js'
 
-const configuredSubmissionFormUrl = (import.meta.env.VITE_SUBMISSION_FORM_URL || '').trim()
-const SUBMISSION_FORM_URL = /^https:\/\//i.test(configuredSubmissionFormUrl)
-  ? configuredSubmissionFormUrl
-  : null
+const SUBMISSION_FORM_URL = normalizeSubmissionUrl(import.meta.env.VITE_SUBMISSION_FORM_URL)
 
 function SubmissionAction({ className, children }) {
   if (!SUBMISSION_FORM_URL) {
@@ -40,7 +38,7 @@ function SubmissionAction({ className, children }) {
 
 const stats = [
   { label: 'Public research access', value: 'Open' },
-  { label: 'Submission route', value: SUBMISSION_FORM_URL ? 'Google Form' : 'Not configured' },
+  { label: 'Submission route', value: SUBMISSION_FORM_URL ? 'Configured form' : 'Not configured' },
   { label: 'Quality signal', value: 'Endorsements' },
 ]
 
@@ -69,7 +67,7 @@ const process = [
   {
     step: '01',
     title: 'Submit',
-    text: 'Authors complete the Google Form with paper details, files, and basic context.',
+    text: 'Authors use the configured submission form to provide paper details, files, and basic context.',
   },
   {
     step: '02',
@@ -125,7 +123,7 @@ function App() {
 
           <div className="hero-actions">
             <SubmissionAction className="button primary">
-              {SUBMISSION_FORM_URL ? 'Submit via Google Form' : 'Submissions not configured'} <ArrowRight size={18} />
+              {SUBMISSION_FORM_URL ? 'Submit research' : 'Submissions not configured'} <ArrowRight size={18} />
             </SubmissionAction>
             <a className="button secondary" href="#about">
               Learn more <ArrowRight size={18} />
