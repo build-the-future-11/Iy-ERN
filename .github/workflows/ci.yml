@@ -1,0 +1,70 @@
+name: Application CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: iyern-application-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+
+jobs:
+  # Locked dependency, product-claim, and submission-boundary verification.
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout exact source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ env.SOURCE_SHA }}
+          persist-credentials: false
+
+      - name: Verify exact source
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
+          test -z "$(git status --porcelain)"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '22.23.2'
+          cache: npm
+
+      - name: Install locked dependencies
+        run: npm ci
+
+      - name: Audit production dependencies
+        run: npm audit --omit=dev --audit-level=high
+
+      - name: Enforce submission configuration boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f .env.example
+          grep -Fq 'VITE_SUBMISSION_FORM_URL=' .env.example
+          # Exclude this workflow because it necessarily contains the sentinel in
+          # the guard itself; all other tracked files remain in scope.
+          if git grep -n 'your-google-form-link' -- ':!:.github/workflows/ci.yml'; then
+            echo 'Placeholder submission URL must not be committed.' >&2
+            exit 1
+          fi
+          if git ls-files --error-unmatch .env >/dev/null 2>&1; then
+            echo '.env must remain local and untracked.' >&2
+            exit 1
+          fi
+
+      - name: Run product-boundary regression tests
+        run: node --test tests/*.test.mjs
+
+      - name: Build production bundle
+        run: npm run build
