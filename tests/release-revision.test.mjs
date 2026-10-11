@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { resolveRevision, validateReceipt, validateRevision } from '../scripts/release-revision.mjs'
+import { normalizeHostingConfig, resolveRevision, validateReceipt, validateRevision } from '../scripts/release-revision.mjs'
 
 const head = 'a'.repeat(40)
 const other = 'b'.repeat(40)
@@ -30,4 +30,16 @@ test('live verification requires the correct service and exact source', () => {
   assert.throws(() => validateReceipt({ service: 'other-site', revision: head }, head))
   assert.throws(() => validateReceipt({ service: 'iyern-public-site', revision: other }, head))
   assert.throws(() => validateReceipt(null, head))
+})
+test('hosting may normalize formatting only when all configuration values match', () => {
+  let restored = null
+  const original = '{"framework":"vite","outputDirectory":"dist"}\n'
+  normalizeHostingConfig({ env: { VERCEL: '1', VERCEL_GIT_COMMIT_SHA: head }, head, committed: () => original, working: () => '{ "outputDirectory": "dist", "framework": "vite" }', restore: text => { restored = text } })
+  assert.equal(restored, original)
+})
+test('hosting normalization rejects actual configuration changes', () => {
+  assert.throws(() => normalizeHostingConfig({ env: { VERCEL: '1', VERCEL_GIT_COMMIT_SHA: head }, head, committed: () => '{"outputDirectory":"dist"}', working: () => '{"outputDirectory":"other"}', restore: () => assert.fail('must not restore changed values') }), /changed configuration values/)
+})
+test('hosting normalization requires the exact checked-out identity', () => {
+  assert.throws(() => normalizeHostingConfig({ env: { VERCEL: '1', VERCEL_GIT_COMMIT_SHA: other }, head, committed: () => assert.fail('must not read mismatched source') }), /differs/)
 })

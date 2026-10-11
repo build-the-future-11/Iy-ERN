@@ -1,4 +1,18 @@
 import { execFileSync } from 'node:child_process'
+import { readFileSync, writeFileSync } from 'node:fs'
+import { isDeepStrictEqual } from 'node:util'
+
+export function normalizeHostingConfig({ env = process.env, head, committed, working = () => readFileSync('vercel.json', 'utf8'), restore = text => writeFileSync('vercel.json', text) }) {
+  if (env.VERCEL !== '1') return
+  if (validateRevision(env.VERCEL_GIT_COMMIT_SHA) !== head) throw new Error('Hosting source identity differs from checkout')
+  const original = committed()
+  const current = working()
+  if (original === current) return
+  if (!isDeepStrictEqual(JSON.parse(original), JSON.parse(current))) throw new Error('Hosting changed configuration values; refusing release')
+  // Vercel reformats its configuration on checkout. Restore only byte differences
+  // with identical JSON values before requiring the entire source to be clean.
+  restore(original)
+}
 
 export function validateRevision(value) {
   const revision = String(value ?? '').trim()
@@ -17,7 +31,9 @@ export function resolveRevision({ env = process.env, git = args => execFileSync(
   }
   const revision = validateRevision(head)
   if (declared.some(value => value !== revision)) throw new Error('Declared release revision differs from checked-out source')
-  if (git(['status', '--porcelain', '--untracked-files=normal'])) throw new Error('Release builds require clean committed source')
+  normalizeHostingConfig({ env, head: revision, committed: () => git(['show', 'HEAD:vercel.json']) + '\n' })
+  const changes = git(['status', '--porcelain', '--untracked-files=normal'])
+  if (changes) throw new Error(`Release builds require clean committed source; changed paths: ${JSON.stringify(changes)}`)
   return revision
 }
 
