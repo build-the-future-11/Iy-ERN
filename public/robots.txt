@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://iy-ern.vercel.app/sitemap.xml

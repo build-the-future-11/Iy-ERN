@@ -1,219 +1,261 @@
-import React from 'react'
+import React, { useMemo, useState } from 'react'
 import {
   ArrowRight,
-  BadgeCheck,
   BookOpen,
-  Clock3,
+  Check,
+  ExternalLink,
+  FileSearch,
   FileText,
-  Filter,
+  Github,
   Globe2,
   Search,
   ShieldCheck,
-  Sparkles,
   Users,
 } from 'lucide-react'
 
-const GOOGLE_FORM_URL = 'https://forms.gle/your-google-form-link'
+const FINANCEMETA_URL = import.meta.env.VITE_FINANCEMETA_URL || 'https://finance-meta-landing.vercel.app'
+const SUBMISSION_URL = import.meta.env.VITE_SUBMISSION_URL || `${FINANCEMETA_URL}/apply?call=research-submission&utm_source=iyern`
+const STANDARDS_URL = `${FINANCEMETA_URL}/research/standards`
+const MEMBER_PORTAL_URL = 'https://finance4all-global-reach.vercel.app/'
+const PORTFOLIO_URL = 'https://thebu1ld.com/network'
+const REPOSITORY_URL = 'https://github.com/build-the-future-11/Iy-ERN'
 
-const stats = [
-  { label: 'Public research access', value: 'Open' },
-  { label: 'Submission route', value: 'Google Form' },
-  { label: 'Quality signal', value: 'Endorsements' },
-]
+// Keep the archive empty until a reviewed, permissioned record is available.
+// Do not add illustrative or placeholder papers to this collection.
+const publications = []
 
 const pillars = [
   {
-    title: 'Financial literacy, made public',
-    text:
-      'A clean home for research, explainers, and evidence-based work that should be easy to read and easy to share.',
-    icon: BookOpen,
+    title: 'An inspectable research record',
+    text: 'Each published record should keep its title, authorship, abstract, review state, revision date, and external evidence together.',
+    icon: FileSearch,
   },
   {
-    title: 'Research with structure',
-    text:
-      'A simple publication flow that keeps submissions organized and presents approved work clearly.',
-    icon: Globe2,
-  },
-  {
-    title: 'Credibility over clutter',
-    text:
-      'An endorsement signal and editorial review help surface stronger work without overcomplicating the experience.',
+    title: 'Clear status, not implied authority',
+    text: 'Submitted, editorially screened, reviewed, and published are different states. The interface labels them separately.',
     icon: ShieldCheck,
+  },
+  {
+    title: 'Connected to FinanceMeta',
+    text: 'IYERN is a FinanceMeta research initiative. Its public standards, applications, and wider research index remain one click away.',
+    icon: Globe2,
   },
 ]
 
 const process = [
   {
     step: '01',
-    title: 'Submit',
-    text: 'Authors complete the Google Form with paper details, files, and basic context.',
+    title: 'Prepare',
+    text: 'Share the question, authorship, abstract, methods, sources, conflicts, and the artifact you want reviewed.',
   },
   {
     step: '02',
-    title: 'Review',
-    text: 'The team checks fit, clarity, structure, and whether the submission meets the site’s standards.',
+    title: 'Screen',
+    text: 'An editor checks scope, attribution, permissions, basic completeness, and whether the claims match the supplied evidence.',
   },
   {
     step: '03',
+    title: 'Review',
+    text: 'A submission is not described as peer reviewed until the review process and resulting status are recorded.',
+  },
+  {
+    step: '04',
     title: 'Publish',
-    text: 'Approved work is presented publicly in a clean, accessible format.',
+    text: 'Accepted work receives a public record with revision history and limitations. DOI assignment is not claimed until operational.',
   },
 ]
 
-function App() {
+const checklist = [
+  'A specific economics, finance, policy, or financial-literacy question',
+  'Named authors and a contact route the team is allowed to use',
+  'Sources, data provenance, and permission to publish the submitted material',
+  'Methods, uncertainty, limitations, and any conflicts of interest',
+]
+
+function ArrowLink({ href, children, className = '', external = false }) {
   return (
-    <main className="page">
+    <a className={className} href={href} {...(external ? { target: '_blank', rel: 'noreferrer' } : {})}>
+      {children} {external ? <ExternalLink size={16} /> : <ArrowRight size={16} />}
+    </a>
+  )
+}
+
+function App() {
+  const [query, setQuery] = useState('')
+  const filteredPublications = useMemo(() => {
+    const normalized = query.trim().toLowerCase()
+    if (!normalized) return publications
+    return publications.filter((paper) =>
+      [paper.title, paper.abstract, ...(paper.authors || []), ...(paper.topics || [])]
+        .join(' ')
+        .toLowerCase()
+        .includes(normalized),
+    )
+  }, [query])
+
+  return (
+    <div className="site-shell">
+      <a className="skip-link" href="#main-content">Skip to main content</a>
       <header className="topbar">
         <div className="topbar-inner">
-          <div>
-            <div className="brand">IYERN</div>
-            <div className="subtitle">International Youth Economics Research Network</div>
-          </div>
+          <a className="brand-lockup" href="#top" aria-label="IYERN home">
+            <span className="brand-mark" aria-hidden="true">iy</span>
+            <span><strong>IYERN</strong><small>International Youth Economics Research Network</small></span>
+          </a>
 
-          <nav className="topbar-actions">
-            <a href="#about">About</a>
+          <nav className="topbar-actions" aria-label="Primary navigation">
+            <a href="#archive">Archive</a>
+            <a href="#standards">Standards</a>
             <a href="#process">Process</a>
-            <a className="submit-link" href={GOOGLE_FORM_URL} target="_blank" rel="noreferrer">
-              Submit research <ArrowRight size={16} />
-            </a>
+            <ArrowLink className="submit-link" href={SUBMISSION_URL} external>Submit research</ArrowLink>
           </nav>
         </div>
       </header>
 
-      <section className="hero">
-        <div className="hero-main">
-          <p className="eyebrow">Open research infrastructure for financial literacy</p>
-          <h1>Public research, presented with the clarity of arXiv and the polish of a modern publication site.</h1>
-          <p className="lede">
-            IYERN is built to make financial literacy and economic research easier to discover, easier to submit, and easier to trust.
-            The site is designed for real work, not filler content.
-          </p>
+      <main id="main-content">
+        <section className="hero" id="top">
+          <div className="hero-main">
+            <p className="eyebrow">A FinanceMeta research initiative</p>
+            <h1>Economics research deserves a public record people can actually inspect.</h1>
+            <p className="lede">
+              IYERN is building an open, youth-focused index for economics, finance, and financial-literacy research—designed around explicit evidence, review status, and revision history.
+            </p>
 
-          <div className="search-shell" aria-hidden="true">
-            <div className="search-box">
-              <Search size={18} />
-              <span>Search research, authors, or topics</span>
+            <div className="hero-actions">
+              <ArrowLink className="button primary" href={SUBMISSION_URL} external>Start a submission</ArrowLink>
+              <ArrowLink className="button secondary" href="#archive">Browse the archive</ArrowLink>
             </div>
-            <button className="filter-button" type="button">
-              <Filter size={16} />
-              Filters
-            </button>
+
+            <p className="hero-note">The public archive is in pre-launch review. No papers or DOI records are represented as published yet.</p>
           </div>
 
-          <div className="hero-actions">
-            <a className="button primary" href={GOOGLE_FORM_URL} target="_blank" rel="noreferrer">
-              Submit via Google Form <ArrowRight size={18} />
-            </a>
-            <a className="button secondary" href="#about">
-              Learn more <ArrowRight size={18} />
-            </a>
-          </div>
-        </div>
-
-        <aside className="hero-side">
-          <div className="info-card spotlight">
-            <div className="info-icon">
-              <Sparkles size={18} />
+          <aside className="hero-side" aria-label="Platform status">
+            <div className="status-card">
+              <span className="status-dot" aria-hidden="true" />
+              <div><strong>Archive status</strong><span>Pre-launch · accepting submission interest</span></div>
             </div>
-            <div>
-              <div className="info-title">Modern, calm, academic</div>
-              <p>No clutter. No fake papers. Just a serious public-facing research network.</p>
-            </div>
-          </div>
+            <dl className="stats-card">
+              <div><dt>Verified public papers</dt><dd>0</dd></div>
+              <div><dt>Review model</dt><dd>Human</dd></div>
+              <div><dt>Public access</dt><dd>Open</dd></div>
+              <div><dt>DOI service</dt><dd>Not active</dd></div>
+            </dl>
+          </aside>
+        </section>
 
-          <div className="stats-card">
-            {stats.map((item) => (
-              <div key={item.label} className="stat-row">
-                <span>{item.label}</span>
-                <strong>{item.value}</strong>
-              </div>
-            ))}
-          </div>
-        </aside>
-      </section>
-
-      <section className="card-grid">
-        {pillars.map(({ title, text, icon: Icon }) => (
-          <article key={title} className="feature-card">
-            <div className="icon-wrap">
-              <Icon size={18} />
-            </div>
-            <h2>{title}</h2>
-            <p>{text}</p>
-          </article>
-        ))}
-      </section>
-
-      <section id="about" className="layout-split">
-        <article className="panel">
-          <div className="section-label">About the platform</div>
-          <h2>Built to feel like a serious research archive, not a generic startup landing page.</h2>
-          <p>
-            The visual direction should be understated, structured, and content-first. Think arXiv’s usefulness,
-            but with better spacing, typography, and a more premium presentation.
-          </p>
-
-          <div className="mini-list">
-            <div className="mini-item">
-              <BadgeCheck size={16} />
-              <span>Endorsement-based quality signal</span>
-            </div>
-            <div className="mini-item">
-              <FileText size={16} />
-              <span>Clean paper submission workflow</span>
-            </div>
-            <div className="mini-item">
-              <Users size={16} />
-              <span>Public access for readers and researchers</span>
-            </div>
-          </div>
-        </article>
-
-        <aside className="panel callout">
-          <div className="section-label">Submission note</div>
-          <p>
-            Authors submit through the form, and the team handles review and publication manually for now.
-            This keeps the site lightweight and credible while the network grows.
-          </p>
-          <a className="button primary full" href={GOOGLE_FORM_URL} target="_blank" rel="noreferrer">
-            Open submission form <ArrowRight size={18} />
-          </a>
-        </aside>
-      </section>
-
-      <section id="process" className="panel process-panel">
-        <div className="section-head">
-          <div>
-            <div className="section-label">Process</div>
-            <h2>Simple publishing flow</h2>
-          </div>
-          <div className="process-tag">
-            <Clock3 size={14} />
-            Human review
-          </div>
-        </div>
-
-        <div className="process-grid">
-          {process.map(({ step, title, text }) => (
-            <article key={step} className="process-card">
-              <div className="step-num">{step}</div>
-              <h3>{title}</h3>
+        <section className="card-grid" aria-label="Platform principles">
+          {pillars.map(({ title, text, icon: Icon }) => (
+            <article key={title} className="feature-card">
+              <div className="icon-wrap"><Icon size={19} /></div>
+              <h2>{title}</h2>
               <p>{text}</p>
             </article>
           ))}
-        </div>
-      </section>
+        </section>
+
+        <section id="archive" className="panel archive-panel" aria-labelledby="archive-title">
+          <div className="section-head">
+            <div>
+              <p className="section-label">Public archive</p>
+              <h2 id="archive-title">Published work will appear here.</h2>
+              <p>Search is wired to the public index; the index remains empty until a paper clears the recorded publication workflow.</p>
+            </div>
+            <span className="count-badge">{publications.length} verified records</span>
+          </div>
+
+          <label className="search-box" htmlFor="paper-search">
+            <Search size={19} aria-hidden="true" />
+            <span className="sr-only">Search papers</span>
+            <input
+              id="paper-search"
+              type="search"
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="Search by title, author, topic, or abstract"
+            />
+          </label>
+
+          <div className="empty-state" role="status" aria-live="polite">
+            <BookOpen size={28} aria-hidden="true" />
+            <h3>{query && filteredPublications.length === 0 ? 'No matching papers.' : 'No public papers yet.'}</h3>
+            <p>{query ? 'Try another search, or return when reviewed records are released.' : 'This is an intentional empty state—not a set of sample papers presented as real work.'}</p>
+            <ArrowLink className="text-link" href={SUBMISSION_URL} external>Prepare the first submission</ArrowLink>
+          </div>
+        </section>
+
+        <section id="standards" className="layout-split">
+          <article className="panel">
+            <p className="section-label">Before submitting</p>
+            <h2>A complete record begins before publication.</h2>
+            <ul className="checklist">
+              {checklist.map((item) => <li key={item}><Check size={17} aria-hidden="true" /><span>{item}</span></li>)}
+            </ul>
+          </article>
+
+          <aside className="panel callout">
+            <FileText size={24} aria-hidden="true" />
+            <p className="section-label">Shared standards</p>
+            <h2>Use the FinanceMeta research framework.</h2>
+            <p>Define the question, comparison, evidence, failure condition, uncertainty, and reproduction route before making a strong claim.</p>
+            <ArrowLink className="button primary full" href={STANDARDS_URL} external>Read research standards</ArrowLink>
+          </aside>
+        </section>
+
+        <section id="process" className="panel process-panel">
+          <div className="section-head">
+            <div>
+              <p className="section-label">Publication process</p>
+              <h2>Four states, each named honestly.</h2>
+            </div>
+            <span className="process-tag"><Users size={15} /> Human review</span>
+          </div>
+          <div className="process-grid">
+            {process.map(({ step, title, text }) => (
+              <article key={step} className="process-card">
+                <div className="step-num">{step}</div>
+                <h3>{title}</h3>
+                <p>{text}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="network-panel">
+          <div>
+            <p className="section-label">The wider network</p>
+            <h2>Move between the archive, the research framework, and the FinanceMeta ecosystem.</h2>
+          </div>
+          <div className="network-links">
+            <ArrowLink className="network-link" href={`${FINANCEMETA_URL}/research`} external>
+              <Globe2 size={20} /> FinanceMeta research
+            </ArrowLink>
+            <ArrowLink className="network-link" href={MEMBER_PORTAL_URL} external>
+              <Users size={20} /> FinanceMeta member portal
+            </ArrowLink>
+            <ArrowLink className="network-link" href={PORTFOLIO_URL} external>
+              <Globe2 size={20} /> Full portfolio map
+            </ArrowLink>
+            <ArrowLink className="network-link" href={REPOSITORY_URL} external>
+              <Github size={20} /> Open source repository
+            </ArrowLink>
+          </div>
+        </section>
+      </main>
 
       <footer className="footer">
         <div>
-          <div className="footer-title">Public research, done cleanly.</div>
-          <p>IYERN is designed to make financial literacy and research more visible without overwhelming the page.</p>
+          <div className="footer-title">IYERN</div>
+          <p>Open economics research infrastructure, with status and limitations kept visible.</p>
         </div>
-        <a className="submit-link" href={GOOGLE_FORM_URL} target="_blank" rel="noreferrer">
-          Submit research <ArrowRight size={16} />
-        </a>
+        <nav aria-label="Footer navigation">
+          <a href="#archive">Archive</a>
+          <a href="#standards">Standards</a>
+          <a href={`${FINANCEMETA_URL}/privacy`}>Privacy</a>
+          <a href={PORTFOLIO_URL}>Portfolio</a>
+          <a href="mailto:financeforalledu@gmail.com">Contact</a>
+        </nav>
       </footer>
-    </main>
+    </div>
   )
 }
 
