@@ -10,6 +10,8 @@ test('submission and ecosystem links use the verified public FinanceMeta origin'
   assert.match(app, /https:\/\/finance-meta-landing\.vercel\.app/)
   assert.match(app, /https:\/\/finance4all-global-reach\.vercel\.app/)
   assert.match(app, /https:\/\/thebu1ld\.com\/network/)
+  assert.match(app, /PROJECT_DIRECTORY_URL = `\$\{FINANCEMETA_URL\}\/projects`/)
+  assert.match(app, /All 48 project webpages/)
   assert.match(app, /call=research-submission/)
   assert.doesNotMatch(app, /your-google-form-link/)
 })
@@ -18,6 +20,13 @@ test('pre-launch archive does not manufacture papers or DOI availability', () =>
   assert.match(app, /const publications = \[\]/)
   assert.match(app, /Verified public papers[\s\S]*?<dd>0<\/dd>/)
   assert.match(app, /DOI service[\s\S]*?<dd>Not active<\/dd>/)
+})
+
+test('the UI exposes a keyboard-accessible four-step platform index', () => {
+  assert.match(app, /className="scope-strip" aria-label="Explore IYERN"/)
+  for (const label of ['Public archive', 'Research standards', 'Publication process', 'Submit research']) {
+    assert.match(app, new RegExp(label))
+  }
 })
 
 test('page metadata exposes the canonical production URL', () => {

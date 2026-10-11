@@ -18,6 +18,7 @@ const SUBMISSION_URL = import.meta.env.VITE_SUBMISSION_URL || `${FINANCEMETA_URL
 const STANDARDS_URL = `${FINANCEMETA_URL}/research/standards`
 const MEMBER_PORTAL_URL = 'https://finance4all-global-reach.vercel.app/'
 const PORTFOLIO_URL = 'https://thebu1ld.com/network'
+const PROJECT_DIRECTORY_URL = `${FINANCEMETA_URL}/projects`
 const REPOSITORY_URL = 'https://github.com/build-the-future-11/Iy-ERN'
 
 // Keep the archive empty until a reviewed, permissioned record is available.
@@ -143,6 +144,13 @@ function App() {
           </aside>
         </section>
 
+        <nav className="scope-strip" aria-label="Explore IYERN">
+          <a href="#archive"><span>01</span><small>Explore</small><strong>Public archive</strong></a>
+          <a href="#standards"><span>02</span><small>Prepare</small><strong>Research standards</strong></a>
+          <a href="#process"><span>03</span><small>Understand</small><strong>Publication process</strong></a>
+          <a href={SUBMISSION_URL}><span>04</span><small>Contribute</small><strong>Submit research</strong></a>
+        </nav>
+
         <section className="card-grid" aria-label="Platform principles">
           {pillars.map(({ title, text, icon: Icon }) => (
             <article key={title} className="feature-card">
@@ -226,8 +234,8 @@ function App() {
             <h2>Move between the archive, the research framework, and the FinanceMeta ecosystem.</h2>
           </div>
           <div className="network-links">
-            <ArrowLink className="network-link" href={`${FINANCEMETA_URL}/research`} external>
-              <Globe2 size={20} /> FinanceMeta research
+            <ArrowLink className="network-link" href={PROJECT_DIRECTORY_URL} external>
+              <Globe2 size={20} /> All 48 project webpages
             </ArrowLink>
             <ArrowLink className="network-link" href={MEMBER_PORTAL_URL} external>
               <Users size={20} /> FinanceMeta member portal
@@ -252,6 +260,7 @@ function App() {
           <a href="#standards">Standards</a>
           <a href={`${FINANCEMETA_URL}/privacy`}>Privacy</a>
           <a href={PORTFOLIO_URL}>Portfolio</a>
+          <a href={PROJECT_DIRECTORY_URL}>All projects</a>
           <a href="mailto:financeforalledu@gmail.com">Contact</a>
         </nav>
       </footer>

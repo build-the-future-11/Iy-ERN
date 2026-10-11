@@ -5,10 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && node scripts/write-release-revision.mjs",
     "preview": "vite preview",
     "test": "node --test tests/*.test.mjs",
-    "check": "npm test && npm run build"
+    "check": "npm test && npm run build",
+    "live:verify": "node scripts/verify-live.mjs"
   },
   "engines": {
     "node": ">=22.12"
