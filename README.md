@@ -13,7 +13,7 @@ These boundaries are intentional. Do not add sample papers, authors, review outc
 
 ## Local development
 
-Use Node 20–22:
+Use Node 22.12 or later (CI pins Node 22.23.2):
 
 ```bash
 npm ci
@@ -32,4 +32,6 @@ The check runs the source/deployment contract tests and creates a production Vit
 
 ## Production
 
-The canonical public origin is `https://iy-ern.vercel.app`. A local build or preview is not deployment evidence. After deployment, verify the canonical origin, submission handoff, FinanceMeta links, response headers, and the exact deployed source revision.
+The canonical public origin is `https://iy-ern.vercel.app`. Release builds require clean committed source and emit `/release-revision.json`. Hosted source archives without Git metadata must receive `SOURCE_SHA` or `VERCEL_GIT_COMMIT_SHA` for the uploaded source; conflicting identities fail the build. A pull-request event SHA is not accepted as a substitute for checked-out source.
+
+After deployment, run `npm run live:verify -- <expected-40-character-commit-sha>` to verify the exact deployed revision, canonical origin and security headers. Separately inspect the submission handoff and FinanceMeta links. Neither a local build nor this read-only health check proves submission delivery.
