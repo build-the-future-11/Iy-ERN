@@ -1,271 +1,37 @@
 import React, { useMemo, useState } from 'react'
-import {
-  ArrowRight,
-  BookOpen,
-  Check,
-  ExternalLink,
-  FileSearch,
-  FileText,
-  Github,
-  Globe2,
-  Search,
-  ShieldCheck,
-  Users,
-} from 'lucide-react'
+import { ArrowUpRight, BookOpen, Search } from 'lucide-react'
+import NetworkStory from './network-story'
+import './network-story.css'
 
 const FINANCEMETA_URL = import.meta.env.VITE_FINANCEMETA_URL || 'https://finance-meta-landing.vercel.app'
-const SUBMISSION_URL = import.meta.env.VITE_SUBMISSION_URL || `${FINANCEMETA_URL}/apply?call=research-submission&utm_source=iyern`
-const STANDARDS_URL = `${FINANCEMETA_URL}/research/standards`
+const JOURNAL_URL = 'https://tally.so/r/b5BBko'
+const FORUM_URL = 'https://tally.so/r/RGXXLJ'
 const MEMBER_PORTAL_URL = 'https://finance4all-global-reach.vercel.app/'
 const PORTFOLIO_URL = 'https://thebu1ld.com/network'
 const PROJECT_DIRECTORY_URL = `${FINANCEMETA_URL}/projects`
-const REPOSITORY_URL = 'https://github.com/build-the-future-11/Iy-ERN'
-
-// Keep the archive empty until a reviewed, permissioned record is available.
-// Do not add illustrative or placeholder papers to this collection.
+// Only permissioned, published records belong in this archive.
 const publications = []
 
-const pillars = [
-  {
-    title: 'An inspectable research record',
-    text: 'Each published record should keep its title, authorship, abstract, review state, revision date, and external evidence together.',
-    icon: FileSearch,
-  },
-  {
-    title: 'Clear status, not implied authority',
-    text: 'Submitted, editorially screened, reviewed, and published are different states. The interface labels them separately.',
-    icon: ShieldCheck,
-  },
-  {
-    title: 'Connected to FinanceMeta',
-    text: 'IYERN is a FinanceMeta research initiative. Its public standards, applications, and wider research index remain one click away.',
-    icon: Globe2,
-  },
-]
-
-const process = [
-  {
-    step: '01',
-    title: 'Prepare',
-    text: 'Share the question, authorship, abstract, methods, sources, conflicts, and the artifact you want reviewed.',
-  },
-  {
-    step: '02',
-    title: 'Screen',
-    text: 'An editor checks scope, attribution, permissions, basic completeness, and whether the claims match the supplied evidence.',
-  },
-  {
-    step: '03',
-    title: 'Review',
-    text: 'A submission is not described as peer reviewed until the review process and resulting status are recorded.',
-  },
-  {
-    step: '04',
-    title: 'Publish',
-    text: 'Accepted work receives a public record with revision history and limitations. DOI assignment is not claimed until operational.',
-  },
-]
-
-const checklist = [
-  'A specific economics, finance, policy, or financial-literacy question',
-  'Named authors and a contact route the team is allowed to use',
-  'Sources, data provenance, and permission to publish the submitted material',
-  'Methods, uncertainty, limitations, and any conflicts of interest',
-]
-
-function ArrowLink({ href, children, className = '', external = false }) {
-  return (
-    <a className={className} href={href} {...(external ? { target: '_blank', rel: 'noreferrer' } : {})}>
-      {children} {external ? <ExternalLink size={16} /> : <ArrowRight size={16} />}
-    </a>
-  )
+function Action({ href, children, secondary = false }) {
+  return <a className={`action${secondary ? ' secondary' : ''}`} href={href}>{children}<ArrowUpRight size={17} aria-hidden="true" /></a>
 }
-
-function App() {
+export default function App() {
   const [query, setQuery] = useState('')
-  const filteredPublications = useMemo(() => {
-    const normalized = query.trim().toLowerCase()
-    if (!normalized) return publications
-    return publications.filter((paper) =>
-      [paper.title, paper.abstract, ...(paper.authors || []), ...(paper.topics || [])]
-        .join(' ')
-        .toLowerCase()
-        .includes(normalized),
-    )
-  }, [query])
-
-  return (
-    <div className="site-shell">
-      <a className="skip-link" href="#main-content">Skip to main content</a>
-      <header className="topbar">
-        <div className="topbar-inner">
-          <a className="brand-lockup" href="#top" aria-label="IYERN home">
-            <span className="brand-mark" aria-hidden="true">iy</span>
-            <span><strong>IYERN</strong><small>International Youth Economics Research Network</small></span>
-          </a>
-
-          <nav className="topbar-actions" aria-label="Primary navigation">
-            <a href="#archive">Archive</a>
-            <a href="#standards">Standards</a>
-            <a href="#process">Process</a>
-            <ArrowLink className="submit-link" href={SUBMISSION_URL} external>Submit research</ArrowLink>
-          </nav>
-        </div>
-      </header>
-
-      <main id="main-content">
-        <section className="hero" id="top">
-          <div className="hero-main">
-            <p className="eyebrow">A FinanceMeta research initiative</p>
-            <h1>Economics research deserves a public record people can actually inspect.</h1>
-            <p className="lede">
-              IYERN is building an open, youth-focused index for economics, finance, and financial-literacy research—designed around explicit evidence, review status, and revision history.
-            </p>
-
-            <div className="hero-actions">
-              <ArrowLink className="button primary" href={SUBMISSION_URL} external>Start a submission</ArrowLink>
-              <ArrowLink className="button secondary" href="#archive">Browse the archive</ArrowLink>
-            </div>
-
-            <p className="hero-note">The public archive is in pre-launch review. No papers or DOI records are represented as published yet.</p>
-          </div>
-
-          <aside className="hero-side" aria-label="Platform status">
-            <div className="status-card">
-              <span className="status-dot" aria-hidden="true" />
-              <div><strong>Archive status</strong><span>Pre-launch · accepting submission interest</span></div>
-            </div>
-            <dl className="stats-card">
-              <div><dt>Verified public papers</dt><dd>0</dd></div>
-              <div><dt>Review model</dt><dd>Human</dd></div>
-              <div><dt>Public access</dt><dd>Open</dd></div>
-              <div><dt>DOI service</dt><dd>Not active</dd></div>
-            </dl>
-          </aside>
-        </section>
-
-        <nav className="scope-strip" aria-label="Explore IYERN">
-          <a href="#archive"><span>01</span><small>Explore</small><strong>Public archive</strong></a>
-          <a href="#standards"><span>02</span><small>Prepare</small><strong>Research standards</strong></a>
-          <a href="#process"><span>03</span><small>Understand</small><strong>Publication process</strong></a>
-          <a href={SUBMISSION_URL}><span>04</span><small>Contribute</small><strong>Submit research</strong></a>
-        </nav>
-
-        <section className="card-grid" aria-label="Platform principles">
-          {pillars.map(({ title, text, icon: Icon }) => (
-            <article key={title} className="feature-card">
-              <div className="icon-wrap"><Icon size={19} /></div>
-              <h2>{title}</h2>
-              <p>{text}</p>
-            </article>
-          ))}
-        </section>
-
-        <section id="archive" className="panel archive-panel" aria-labelledby="archive-title">
-          <div className="section-head">
-            <div>
-              <p className="section-label">Public archive</p>
-              <h2 id="archive-title">Published work will appear here.</h2>
-              <p>Search is wired to the public index; the index remains empty until a paper clears the recorded publication workflow.</p>
-            </div>
-            <span className="count-badge">{publications.length} verified records</span>
-          </div>
-
-          <label className="search-box" htmlFor="paper-search">
-            <Search size={19} aria-hidden="true" />
-            <span className="sr-only">Search papers</span>
-            <input
-              id="paper-search"
-              type="search"
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              placeholder="Search by title, author, topic, or abstract"
-            />
-          </label>
-
-          <div className="empty-state" role="status" aria-live="polite">
-            <BookOpen size={28} aria-hidden="true" />
-            <h3>{query && filteredPublications.length === 0 ? 'No matching papers.' : 'No public papers yet.'}</h3>
-            <p>{query ? 'Try another search, or return when reviewed records are released.' : 'This is an intentional empty state—not a set of sample papers presented as real work.'}</p>
-            <ArrowLink className="text-link" href={SUBMISSION_URL} external>Prepare the first submission</ArrowLink>
-          </div>
-        </section>
-
-        <section id="standards" className="layout-split">
-          <article className="panel">
-            <p className="section-label">Before submitting</p>
-            <h2>A complete record begins before publication.</h2>
-            <ul className="checklist">
-              {checklist.map((item) => <li key={item}><Check size={17} aria-hidden="true" /><span>{item}</span></li>)}
-            </ul>
-          </article>
-
-          <aside className="panel callout">
-            <FileText size={24} aria-hidden="true" />
-            <p className="section-label">Shared standards</p>
-            <h2>Use the FinanceMeta research framework.</h2>
-            <p>Define the question, comparison, evidence, failure condition, uncertainty, and reproduction route before making a strong claim.</p>
-            <ArrowLink className="button primary full" href={STANDARDS_URL} external>Read research standards</ArrowLink>
-          </aside>
-        </section>
-
-        <section id="process" className="panel process-panel">
-          <div className="section-head">
-            <div>
-              <p className="section-label">Publication process</p>
-              <h2>Four states, each named honestly.</h2>
-            </div>
-            <span className="process-tag"><Users size={15} /> Human review</span>
-          </div>
-          <div className="process-grid">
-            {process.map(({ step, title, text }) => (
-              <article key={step} className="process-card">
-                <div className="step-num">{step}</div>
-                <h3>{title}</h3>
-                <p>{text}</p>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        <section className="network-panel">
-          <div>
-            <p className="section-label">The wider network</p>
-            <h2>Move between the archive, the research framework, and the FinanceMeta ecosystem.</h2>
-          </div>
-          <div className="network-links">
-            <ArrowLink className="network-link" href={PROJECT_DIRECTORY_URL} external>
-              <Globe2 size={20} /> All 48 project webpages
-            </ArrowLink>
-            <ArrowLink className="network-link" href={MEMBER_PORTAL_URL} external>
-              <Users size={20} /> FinanceMeta member portal
-            </ArrowLink>
-            <ArrowLink className="network-link" href={PORTFOLIO_URL} external>
-              <Globe2 size={20} /> Full portfolio map
-            </ArrowLink>
-            <ArrowLink className="network-link" href={REPOSITORY_URL} external>
-              <Github size={20} /> Open source repository
-            </ArrowLink>
-          </div>
-        </section>
-      </main>
-
-      <footer className="footer">
-        <div>
-          <div className="footer-title">IYERN</div>
-          <p>Open economics research infrastructure, with status and limitations kept visible.</p>
-        </div>
-        <nav aria-label="Footer navigation">
-          <a href="#archive">Archive</a>
-          <a href="#standards">Standards</a>
-          <a href={`${FINANCEMETA_URL}/privacy`}>Privacy</a>
-          <a href={PORTFOLIO_URL}>Portfolio</a>
-          <a href={PROJECT_DIRECTORY_URL}>All projects</a>
-          <a href="mailto:financeforalledu@gmail.com">Contact</a>
-        </nav>
-      </footer>
-    </div>
-  )
+  const results = useMemo(() => publications.filter(p => [p.title, p.abstract, ...(p.authors || [])].join(' ').toLowerCase().includes(query.trim().toLowerCase())), [query])
+  return <div className="site-shell">
+    <a className="skip-link" href="#main-content">Skip to main content</a>
+    <header className="topbar"><a href="#top" className="brand" aria-label="IYERN home"><span className="brand-mark">iy.</span><span>IYERN<small>A FinanceMeta research initiative</small></span></a><nav aria-label="Primary navigation"><a href="#network">The network</a><a href="#journal">Journal</a><a href="#forum">Preprint forum</a><a className="nav-apply" href="#apply">Submit research <ArrowUpRight size={15} aria-hidden="true" /></a></nav></header>
+    <main id="main-content">
+      <section className="hero" id="top"><div className="hero-copy"><p className="eyebrow">International Youth Economics Research Network</p><h1>The next generation<br />of economic thinking<br /><em>starts with a question.</em></h1><p className="lede">A global community for young researchers in economics and finance. Develop your ideas, work across borders, and bring your research into the conversation.</p><div className="hero-actions"><Action href="#journal">Discover the journal</Action><Action href="#network" secondary>Explore the network</Action></div><p className="hero-foot">Inquiry. Mentorship. Research with a public life.</p></div><aside className="hero-edition" aria-label="Journal introduction"><div className="edition-top"><span>FINANCEMETA / IYERN</span><ArrowUpRight size={20} aria-hidden="true" /></div><p>International Youth<br />Economics Research<br />Journal</p><strong>Ideas<br />worth<br /><em>examining.</em></strong><div className="edition-bottom"><span>IYERJ</span><small>Global perspectives.<br />Careful peer review.</small></div></aside></section>
+      <nav className="section-index" aria-label="Explore IYERN"><a href="#cohort"><span>01</span>Research cohort</a><a href="#labs"><span>02</span>FinanceMeta Labs</a><a href="#community"><span>03</span>Our community</a><a href="#summer"><span>04</span>Summer programs</a></nav>
+      <NetworkStory />
+      <section className="journal-section" id="journal" aria-labelledby="journal-heading"><div className="journal-intro"><p className="eyebrow">06 / The flagship journal</p><h2 id="journal-heading">International Youth<br />Economics Research Journal</h2><p className="journal-deck">An international, highly selective, peer-reviewed journal for ambitious economic thinking.</p><p>IYERJ gives emerging researchers a route to develop and present substantial work in economics, finance, computational economics, public policy and related fields. It combines a demanding publication standard with mentorship offered for every submitted paper.</p><p>Selection focuses on the research: the importance and clarity of the question, engagement with existing work, the soundness of the approach, the strength of the evidence and an honest account of limitations. A recognizable affiliation cannot substitute for a convincing paper.</p><Action href={JOURNAL_URL}>Apply to the journal</Action></div><div className="journal-principles"><article><span>01 / Selection</span><h3>A high bar for publication</h3><p>The journal is highly selective. Original analysis, careful replication and well-supported theoretical or empirical contributions belong in the conversation. Manuscripts must earn publication through their quality.</p></article><article><span>02 / Development</span><h3>Mentorship for every paper</h3><p>Every submitted paper is offered mentorship. Tell us where guidance would help: refining the question, strengthening methods, interpreting findings, writing clearly or responding to review. Mentorship and editorial acceptance are separate decisions.</p></article><article><span>03 / A lasting record</span><h3>Global reach & DOI publication</h3><p>The journal is designed for an international readership and a durable, citable research record. DOI registration is being set up; assignment will be confirmed for individual published articles when the service is operational.</p></article></div></section>
+      <section className="review-section" id="process" aria-labelledby="process-heading"><p className="eyebrow">From manuscript to publication</p><h2 id="process-heading">Careful work. Constructive review.</h2><ol className="review-steps"><li><span>01</span><h3>Submit</h3><p>Provide the manuscript, abstract, authorship, methods, sources and mentorship priorities.</p></li><li><span>02</span><h3>Editorial assessment</h3><p>The team considers scope, completeness, contribution, permissions and research integrity.</p></li><li><span>03</span><h3>Peer review & revision</h3><p>Reviewers examine the work. Authors address feedback and explain changes, alongside mentorship.</p></li><li><span>04</span><h3>Publication decision</h3><p>Accepted papers receive a publication record after final author approval. Review status and any DOI belong to the individual article.</p></li></ol></section>
+      <section className="forum-section" id="forum" aria-labelledby="forum-heading"><div><p className="eyebrow">07 / Research in conversation</p><h2 id="forum-heading">The IYERN<br /><em>Preprint Forum</em></h2><p className="large-copy">A working paper is the beginning of a conversation.</p><p>Share research in progress, invite questions about a method, present a replication or make an early result available for discussion. The forum is a space for developing ideas before or alongside a separate journal submission.</p><Action href={FORUM_URL}>Submit to the preprint forum</Action></div><div className="forum-details"><p className="status-note"><strong>Preprints are not peer-reviewed journal publications.</strong> They are working manuscripts whose findings may change. Forum moderation checks suitability and sharing permissions; it does not confer journal acceptance.</p><h3>Bring a clear question and an honest account</h3><p>Include an abstract, author details, research area, keywords, version and date. Explain the methods, sources, limitations and the feedback you want. Link supporting code or data where sharing is permitted.</p><h3>Make revision part of the record</h3><p>Tell us about earlier versions, existing identifiers and any journal consideration. A revision should make clear what changed so readers can follow the development of the work.</p><h3>A place for thoughtful exchange</h3><p>Critique the argument and evidence, credit the people behind the work and distinguish suggestions from established findings. All authors must agree to public sharing. Submissions are moderated before posting.</p></div></section>
+      <section id="archive" className="archive-section" aria-labelledby="archive-heading"><div><p className="eyebrow">Public research archive</p><h2 id="archive-heading">Follow the work as it develops.</h2><p>Journal articles and forum preprints will appear with their authors, abstract, version, publication date and clearly labeled review status.</p></div><label className="search-box" htmlFor="paper-search"><Search size={18} aria-hidden="true" /><span className="sr-only">Search papers</span><input id="paper-search" type="search" placeholder="Search title, author or abstract" value={query} onChange={event => setQuery(event.target.value)} /></label><div className="archive-empty" role="status"><BookOpen size={24} aria-hidden="true" /><div><h3>{query ? 'No matching papers yet.' : 'The public archive is awaiting its first papers.'}</h3><p>{results.length} public records. Approved articles and preprints will be listed here as they are released.</p></div>{query && <button type="button" onClick={() => setQuery('')}>Clear search</button>}</div></section>
+      <section className="apply-section" id="apply" aria-labelledby="apply-heading"><div><p className="eyebrow">08 / Give your question a next step</p><h2 id="apply-heading">Two routes.<br /><em>One research community.</em></h2><p>Choose the form that matches the stage of your work. Both ask for a manuscript link, author information, evidence, disclosures and the guidance you need.</p></div><div className="application-options"><article><span>FOR JOURNAL CONSIDERATION</span><h3>Journal manuscript application</h3><p>Submit developed research for editorial assessment, peer review and mentorship.</p><Action href={JOURNAL_URL}>Open journal application</Action></article><article><span>FOR WORKING RESEARCH</span><h3>Preprint forum application</h3><p>Share a working paper for moderation and community discussion. Publication is never automatic.</p><Action href={FORUM_URL} secondary>Open forum application</Action></article></div></section>
+      <section className="faq-section" id="standards" aria-labelledby="faq-heading"><div><p className="eyebrow">Before you submit</p><h2 id="faq-heading">A few useful answers.</h2></div><div><details><summary>Who is the network for?</summary><p>IYERN focuses on young and emerging researchers interested in economics and finance. Your research question, preparation and willingness to improve the work matter. Independent researchers can describe their status in the forms.</p></details><details><summary>Does mentorship guarantee journal acceptance?</summary><p>No. Mentorship is offered for every submitted paper, while acceptance depends on editorial assessment, peer review and revision. Guidance can be valuable even when a paper is not selected for publication.</p></details><details><summary>Can a preprint later be considered by the journal?</summary><p>Use the separate journal application and disclose the preprint link and version. The editorial team will assess the manuscript under the journal's review process. A forum posting is not a journal decision.</p></details><details><summary>What should I prepare?</summary><p>A readable manuscript, abstract, author list and contributions, sources, methods, limitations, data and code availability, and relevant funding, conflicts, ethics and AI-use disclosures. Make sure every author has approved the submission and that the team can access the document link.</p></details><details><summary>What happens to my submission?</summary><p>Your form responses go to the IYERN team for assessment and related contact. The forum asks separately for permission to share the research publicly. Journal publication requires a final agreement. Read the privacy information in the form and retain a copy of your manuscript. For corrections or withdrawal requests, contact <a href="mailto:financeforalledu@gmail.com">financeforalledu@gmail.com</a>.</p></details><a className="story-link" href={`${FINANCEMETA_URL}/research/standards`}>Read research standards <ArrowUpRight size={15} aria-hidden="true" /></a></div></section>
+    </main>
+    <footer><div><a className="footer-wordmark" href="#top">iyern.</a><p>International Youth Economics Research Network<br />Part of the FinanceMeta / Finance4All ecosystem.</p></div><nav aria-label="Footer navigation"><a href={FINANCEMETA_URL}>FinanceMeta</a><a href={PROJECT_DIRECTORY_URL}>All projects</a><a href={MEMBER_PORTAL_URL}>Member portal</a><a href={PORTFOLIO_URL}>Portfolio map</a><a href={`${FINANCEMETA_URL}/privacy`}>Privacy</a><a href="mailto:financeforalledu@gmail.com">Contact</a></nav><small>© {new Date().getFullYear()} IYERN / FinanceMeta</small></footer>
+  </div>
 }
-
-export default App
