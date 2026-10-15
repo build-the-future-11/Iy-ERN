@@ -1,0 +1,21 @@
+IYERN author preparation checklist
+
+Choose your route:
+- Journal: a developed manuscript for editorial assessment and peer review.
+- Forum: a working paper or revision for moderation and discussion.
+
+Prepare one readable manuscript link with access granted to reviewers.
+Include the title, abstract, authors and contributions, version and date.
+In the manuscript, explain the question, prior work, method, evidence and limitations.
+State data/code availability and any restrictions.
+Disclose prior versions, concurrent submissions, funding, conflicts, ethics and AI assistance.
+Obtain all authors' approval and permission to share the materials.
+Keep identifiable participant data, confidential financial data and identity documents out of the submission.
+State what feedback or mentorship would help; this is separate from acceptance.
+
+Journal: https://tally.so/r/b5BBko
+Preprint forum: https://tally.so/r/RGXXLJ
+Research roles: https://finance-meta-landing.vercel.app/join
+Corrections or withdrawal: financeforalledu@gmail.com
+
+DOI registration is being set up. Submission does not guarantee publication or a DOI.
